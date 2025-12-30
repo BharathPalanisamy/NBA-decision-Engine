@@ -1,6 +1,6 @@
-"""Quick retrain of all models with new defensive feature"""
+"""Quick retrain of all models with Random Forest"""
 import pandas as pd
-import xgboost as xgb
+from sklearn.ensemble import RandomForestRegressor
 import pickle
 from sklearn.model_selection import train_test_split
 
@@ -27,7 +27,7 @@ stats = {
 
 for stat, model_file in stats.items():
     print(f"\n{'='*50}")
-    print(f"Training {stat}...")
+    print(f"Training {stat} with Random Forest...")
     
     # Prepare data
     train_df = df.dropna(subset=feature_cols + [stat])
@@ -39,12 +39,12 @@ for stat, model_file in stats.items():
         X, y, test_size=0.2, random_state=42
     )
     
-    # Train
-    model = xgb.XGBRegressor(
+    # Train with Random Forest
+    model = RandomForestRegressor(
         n_estimators=100,
-        max_depth=6,
-        learning_rate=0.1,
-        random_state=42
+        max_depth=10,
+        random_state=42,
+        n_jobs=-1
     )
     
     model.fit(X_train, y_train)
@@ -70,4 +70,4 @@ for stat, model_file in stats.items():
     print(f"✅ Saved {model_file}")
 
 print(f"\n{'='*50}")
-print("🎯 All models retrained!")
+print("🎯 All models retrained with Random Forest!")
