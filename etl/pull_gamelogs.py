@@ -13,7 +13,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 
-SEASONS = ["2025-26"]
+SEASONS = ["2023-24"]
 SLEEP_MIN = 0.3
 SLEEP_MAX = 0.7
 MAX_WORKERS = 20  # Parallel requests

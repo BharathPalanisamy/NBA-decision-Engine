@@ -52,6 +52,14 @@ def main():
         WHERE minutes IS NOT NULL
         ORDER BY player_id, game_date
     """, engine)
+    
+    # Load team defensive stats
+    try:
+        team_def = pd.read_sql("SELECT * FROM team_defense", engine)
+        has_defense = True
+    except:
+        print("⚠️  No team defense data found, skipping opponent defense features")
+        has_defense = False
 
     df["game_date"] = pd.to_datetime(df["game_date"])
     
@@ -59,6 +67,18 @@ def main():
     opponent_data = df['matchup'].apply(extract_opponent_and_location).tolist()
     df['opponent'] = [x[0] for x in opponent_data]
     df['is_home'] = [x[1] for x in opponent_data]
+    
+    # 2b) Add opponent defensive stats
+    if has_defense:
+        df = df.merge(
+            team_def[['team_abbrev', 'season', 'pts_allowed']],
+            left_on=['opponent', 'season'],
+            right_on=['team_abbrev', 'season'],
+            how='left'
+        )
+        df.drop('team_abbrev', axis=1, inplace=True)
+    else:
+        df['pts_allowed'] = None
 
     # 3) Calculate shooting percentages
     df["fg_pct"] = np.where(df["fga"] > 0, df["fgm"] / df["fga"], 0)
