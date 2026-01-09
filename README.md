@@ -64,7 +64,7 @@ python features/build_features.py
 streamlit run app/app.py
 ```
 
-Go to http://localhost:8501
+Go to http://3.92.21.236/
 
 ## How I Use It
 
